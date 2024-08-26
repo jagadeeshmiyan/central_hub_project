@@ -11,7 +11,7 @@ class Course(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
 
     def __str__(self):
-        return f"{self.name} is handeled by {self.teacher}
+        return f"{self.name} is handeled by {self.teacher}"
 
 
 class Assessment(models.Model):
