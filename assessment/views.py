@@ -1,12 +1,13 @@
 from django.shortcuts import render
+from assessment.permissions import IsTeacher
 from rest_framework.decorators import api_view, permission_classes
 from .serializer import *
 from .models import *
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib import admin
 
 # Create your views here.
-
 
 # @api_view(['GET'])
 # def assessment_list(request):
@@ -48,3 +49,15 @@ def assessment_list(request):
             })
 
         return Response(data)
+    
+
+@api_view(['POST'])
+@permission_classes([IsTeacher])
+def create_assessment(request):
+    """ Creating a new assessment (Teacher only) """
+    if request.method == 'POST':
+        serializer = AssessmentSerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

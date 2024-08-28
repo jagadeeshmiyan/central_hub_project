@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#Auth user model
+
+AUTH_USER_MODEL = 'assessment.CustomUser'  # Replace 'yourapp' with the name of your app
+
 
 # Application definition
 

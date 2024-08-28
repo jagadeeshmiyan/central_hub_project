@@ -2,13 +2,29 @@ from django.db import models
 
 # Create your models here.
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     is_teacher = models.BooleanField(default=False)
+#     # Add any other fields you need
+
+#     def __str__(self):
+#         return self.user.username
+
+class CustomUser(AbstractUser):
+    is_teacher = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.username
+    
 
 class Course(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='courses')
 
     def __str__(self):
         return f"{self.name} is handeled by {self.teacher}"
@@ -28,7 +44,7 @@ class Assessment(models.Model):
 
     title = models.CharField(max_length=255)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='assessments')
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
     instructions = models.TextField(blank=True, null=True)
@@ -72,7 +88,7 @@ class Question(models.Model):
 
 class Submission(models.Model):
     assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name='submissions')
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='submissions')
     submitted_at = models.DateTimeField(auto_now_add=True)
     score = models.FloatField(null=True, blank=True)
     feedback = models.TextField(null=True, blank=True)
@@ -83,7 +99,7 @@ class Submission(models.Model):
 
 
 class QuestionBank(models.Model):
-    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question_banks')
+    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='question_banks')
     question = models.OneToOneField(Question, on_delete=models.CASCADE)
     category = models.CharField(max_length=255, null=True, blank=True)
     tags = models.CharField(max_length=255, null=True, blank=True)
@@ -93,7 +109,7 @@ class QuestionBank(models.Model):
 
 
 class StudentCourse(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='student_courses')
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='student_courses')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrolled_students')
 
     def __str__(self):

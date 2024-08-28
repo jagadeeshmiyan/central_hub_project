@@ -21,5 +21,6 @@ from assessment import views
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('assessment list/', views.assessment_list, name='assessment_list')
+    path('assessment list/', views.assessment_list, name='assessment_list'),
+    path('create assessment/', views.create_assessment, name='create assessment'),
 ]
